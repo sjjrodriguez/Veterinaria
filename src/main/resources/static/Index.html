@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Veterinaria</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: sans-serif;
+            background: #f4f6f8;
+            color: #1a1a1a;
+        }
+
+        .header {
+            background: #fff;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #e8f0fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .header h1 { font-size: 17px; font-weight: 600; }
+        .header p  { font-size: 12px; color: #888; }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            padding: 1rem 1.5rem 0;
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: 8px 8px 0 0;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            color: #666;
+            background: transparent;
+        }
+
+        .tab.active {
+            background: #f4f6f8;
+            border-color: #e0e0e0;
+            border-bottom-color: #f4f6f8;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .section { display: none; padding: 1.5rem; }
+        .section.active { display: block; }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .mascota-name { font-weight: 600; font-size: 15px; }
+        .mascota-meta { font-size: 13px; color: #888; margin-top: 2px; }
+
+        .id-badge {
+            font-size: 11px;
+            background: #f0f0f0;
+            color: #888;
+            padding: 2px 7px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .badge {
+            font-size: 11px;
+            background: #e6f4ea;
+            color: #2e7d32;
+            padding: 3px 9px;
+            border-radius: 20px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 4px; }
+
+        .field label { font-size: 12px; color: #666; }
+
+        .field input {
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: transparent;
+            font-size: 13px;
+            cursor: pointer;
+            color: #1a1a1a;
+        }
+
+        .btn:hover { background: #f0f0f0; }
+
+        .btn-primary {
+            background: #e8f0fe;
+            border-color: #aac4f5;
+            color: #1a56db;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover { background: #d0e2fc; }
+
+        .btn-danger { color: #c0392b; }
+        .btn-danger:hover { background: #fdecea; border-color: #f5c6c6; }
+
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+        .msg {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .msg.success {
+            background: #e6f4ea;
+            color: #2e7d32;
+            border: 1px solid #b7dfbe;
+        }
+
+        .msg.error {
+            background: #fdecea;
+            color: #c0392b;
+            border: 1px solid #f5c6c6;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 2rem;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .loader {
+            text-align: center;
+            padding: 1.5rem;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-icon">🐾</div>
+    <div>
+        <h1>Veterinaria</h1>
+        <p>Gestión de mascotas — localhost:8080</p>
+    </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+    <div class="tab active" onclick="showTab('lista')">Todas las mascotas</div>
+    <div class="tab" onclick="showTab('crear')">Nueva mascota</div>
+    <div class="tab" onclick="showTab('buscar')">Buscar por ID</div>
+</div>
+
+<!-- SECCIÓN: LISTA -->
+<div id="tab-lista" class="section active">
+    <div id="msg-lista"></div>
+    <div class="search-bar">
+        <button class="btn btn-primary" onclick="cargarMascotas()">Actualizar lista</button>
+    </div>
+    <div id="lista-container">
+        <div class="loader">Cargando mascotas...</div>
+    </div>
+</div>
+
+<!-- SECCIÓN: CREAR -->
+<div id="tab-crear" class="section">
+    <div id="msg-crear"></div>
+    <div class="card">
+        <p style="font-size:13px;color:#888;margin-bottom:12px">Completa los datos de la nueva mascota</p>
+        <div class="field-row">
+            <div class="field">
+                <label>Nombre</label>
+                <input id="c-nombre" placeholder="Ej: Firulais" />
+            </div>
+            <div class="field">
+                <label>Raza</label>
+                <input id="c-raza" placeholder="Ej: Labrador" />
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>Edad (años)</label>
+                <input id="c-edad" type="number" min="0" placeholder="Ej: 3" />
+            </div>
+        </div>
+        <div class="actions">
+            <button class="btn" onclick="limpiarFormCrear()">Limpiar</button>
+            <button class="btn btn-primary" onclick="crearMascota()">Crear mascota</button>
+        </div>
+    </div>
+</div>
+
+<!-- SECCIÓN: BUSCAR -->
+<div id="tab-buscar" class="section">
+    <div id="msg-buscar"></div>
+    <div class="card" style="margin-bottom:10px">
+        <p style="font-size:13px;color:#888;margin-bottom:10px">Busca o edita una mascota por su ID</p>
+        <div style="display:flex;gap:8px">
+            <input id="buscar-id" type="number" placeholder="ID de la mascota"
+                   style="flex:1;padding:7px 10px;border-radius:8px;border:1px solid #ddd;background:#fafafa;font-size:13px" />
+            <button class="btn btn-primary" onclick="buscarPorId()">Buscar</button>
+        </div>
+    </div>
+    <div id="resultado-buscar"></div>
+</div>
+
+<script>
+    const API = 'http://localhost:8080/api/mascotas';
+
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        const tabs = ['lista', 'crear', 'buscar'];
+        document.querySelectorAll('.tab')[tabs.indexOf(tab)].classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'lista') cargarMascotas();
+    }
+
+    function showMsg(id, txt, type) {
+        const el = document.getElementById(id);
+        el.innerHTML = `<div class="msg ${type}">${txt}</div>`;
+        setTimeout(() => el.innerHTML = '', 3000);
+    }
+
+    async function cargarMascotas() {
+        const c = document.getElementById('lista-container');
+        c.innerHTML = '<div class="loader">Cargando...</div>';
+        try {
+            const res = await fetch(API);
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            if (!data.length) {
+                c.innerHTML = '<div class="empty">No hay mascotas registradas</div>';
+                return;
+            }
+            c.innerHTML = data.map(m => cardMascota(m)).join('');
+        } catch (e) {
+            c.innerHTML = `<div class="msg error">No se pudo conectar con la API. Verifica que Spring Boot esté corriendo en localhost:8080</div>`;
+        }
+    }
+
+    function cardMascota(m) {
+        return `
+        <div class="card" id="card-${m.id}">
+          <div class="card-header">
+            <div>
+              <span class="mascota-name">${m.nombre}</span>
+              <span class="id-badge">#${m.id}</span>
+              <p class="mascota-meta">${m.raza} · ${m.edad} año${m.edad !== 1 ? 's' : ''}</p>
+            </div>
+            <span class="badge">Registrada</span>
+          </div>
+          <div id="edit-${m.id}" style="display:none">
+            <div class="field-row" style="margin-top:10px">
+              <div class="field"><label>Nombre</label><input id="e-nombre-${m.id}" value="${m.nombre}" /></div>
+              <div class="field"><label>Raza</label><input id="e-raza-${m.id}" value="${m.raza}" /></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Edad</label><input id="e-edad-${m.id}" type="number" value="${m.edad}" /></div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-sm" id="btn-edit-${m.id}" onclick="toggleEdit(${m.id})">Editar</button>
+            <button class="btn btn-sm btn-primary" id="btn-save-${m.id}" style="display:none" onclick="actualizarMascota(${m.id})">Guardar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarMascota(${m.id})">Eliminar</button>
+          </div>
+        </div>`;
+    }
+
+    function toggleEdit(id) {
+        const edit = document.getElementById('edit-' + id);
+        const btnEdit = document.getElementById('btn-edit-' + id);
+        const btnSave = document.getElementById('btn-save-' + id);
+        const visible = edit.style.display !== 'none';
+        edit.style.display = visible ? 'none' : 'block';
+        btnEdit.style.display = visible ? 'inline-block' : 'none';
+        btnSave.style.display = visible ? 'none' : 'inline-block';
+    }
+
+    async function actualizarMascota(id) {
+        const body = {
+            nombre: document.getElementById('e-nombre-' + id).value,
+            raza: document.getElementById('e-raza-' + id).value,
+            edad: parseInt(document.getElementById('e-edad-' + id).value)
+        };
+        try {
+            const res = await fetch(`${API}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) throw new Error();
+            showMsg('msg-lista', 'Mascota actualizada correctamente', 'success');
+            cargarMascotas();
+        } catch (e) {
+            showMsg('msg-lista', 'Error al actualizar', 'error');
+        }
+    }
+
+    async function eliminarMascota(id) {
+        if (!confirm(`¿Eliminar mascota #${id}?`)) return;
+        try {
+            const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error();
+            showMsg('msg-lista', 'Mascota eliminada', 'success');
+            cargarMascotas();
+        } catch (e) {
+            showMsg('msg-lista', 'Error al eliminar', 'error');
+        }
+    }
+
+    async function crearMascota() {
+        const nombre = document.getElementById('c-nombre').value.trim();
+        const raza = document.getElementById('c-raza').value.trim();
+        const edad = parseInt(document.getElementById('c-edad').value);
+        if (!nombre || !raza || isNaN(edad)) {
+            showMsg('msg-crear', 'Completa todos los campos', 'error');
+            return;
+        }
+        try {
+            const res = await fetch(API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, raza, edad })
+            });
+            if (!res.ok) throw new Error();
+            showMsg('msg-crear', `Mascota "${nombre}" creada exitosamente`, 'success');
+            limpiarFormCrear();
+        } catch (e) {
+            showMsg('msg-crear', 'Error al crear la mascota', 'error');
+        }
+    }
+
+    function limpiarFormCrear() {
+        ['c-nombre', 'c-raza', 'c-edad'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    async function buscarPorId() {
+        const id = document.getElementById('buscar-id').value;
+        if (!id) { showMsg('msg-buscar', 'Ingresa un ID', 'error'); return; }
+        const c = document.getElementById('resultado-buscar');
+        c.innerHTML = '<div class="loader">Buscando...</div>';
+        try {
+            const res = await fetch(`${API}/${id}`);
+            if (res.status === 404) { c.innerHTML = '<div class="msg error">Mascota no encontrada</div>'; return; }
+            if (!res.ok) throw new Error();
+            const m = await res.json();
+            c.innerHTML = cardMascota(m);
+        } catch (e) {
+            c.innerHTML = '<div class="msg error">Error al buscar</div>';
+        }
+    }
+
+    cargarMascotas();
+</script>
+
+</body>
+</html>
